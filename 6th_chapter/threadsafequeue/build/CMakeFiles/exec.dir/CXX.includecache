@@ -1,0 +1,46 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/wangs7/VSCode/Concurrency/6th_chapter/threadsafequeue/main.cpp
+iostream
+-
+thread
+-
+unistd.h
+-
+queue_s.h
+/home/wangs7/VSCode/Concurrency/6th_chapter/threadsafequeue/queue_s.h
+queue_p.h
+/home/wangs7/VSCode/Concurrency/6th_chapter/threadsafequeue/queue_p.h
+ts_queue_puppet_v2.h
+/home/wangs7/VSCode/Concurrency/6th_chapter/threadsafequeue/ts_queue_puppet_v2.h
+
+/home/wangs7/VSCode/Concurrency/6th_chapter/threadsafequeue/queue_p.h
+queue
+-
+mutex
+-
+condition_variable
+-
+
+/home/wangs7/VSCode/Concurrency/6th_chapter/threadsafequeue/queue_s.h
+queue
+-
+mutex
+-
+condition_variable
+-
+
+/home/wangs7/VSCode/Concurrency/6th_chapter/threadsafequeue/ts_queue_puppet_v2.h
+algorithm
+-
+memory
+-
+mutex
+-
+

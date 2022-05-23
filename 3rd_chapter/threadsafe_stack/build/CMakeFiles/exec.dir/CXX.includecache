@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/wangs7/VSCode/Concurrency/3rd_chapter/threadsafe_stack/main_test.cpp
+iostream
+-
+thread
+-
+cstdlib
+-
+unistd.h
+-
+threadsafe_stack.h
+/home/wangs7/VSCode/Concurrency/3rd_chapter/threadsafe_stack/threadsafe_stack.h
+
+/home/wangs7/VSCode/Concurrency/3rd_chapter/threadsafe_stack/threadsafe_stack.h
+stack
+-
+mutex
+-
+exception
+-
+typeinfo
+-
+memory
+-
+
