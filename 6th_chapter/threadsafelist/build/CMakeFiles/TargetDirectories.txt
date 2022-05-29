@@ -1,3 +1,0 @@
-/home/wangs7/VSCode/Concurrency/6th_chapter/threadsafelist/build/CMakeFiles/rebuild_cache.dir
-/home/wangs7/VSCode/Concurrency/6th_chapter/threadsafelist/build/CMakeFiles/exec.dir
-/home/wangs7/VSCode/Concurrency/6th_chapter/threadsafelist/build/CMakeFiles/edit_cache.dir
