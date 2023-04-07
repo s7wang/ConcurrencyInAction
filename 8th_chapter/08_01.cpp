@@ -1,20 +1,38 @@
+#include <iostream>
+#include <algorithm>
+#include <stack>
 #include <list>
 #include <vector>
 #include <future>
 #include <chrono>
 
+#include "threadsafe_stack.h"
+
 template<typename T>
-struct sorter
+class chunk_to_sort
 {
-    struct chunk_to_sort
+public:
+    std::list<T> data;
+    std::promise<std::list<T> > promise;
+
+    chunk_to_sort() {}
+    chunk_to_sort(const chunk_to_sort &other)
     {
-        std::list<T> data;
-        std::promise<std::list<T> > promise;
-    };
-    thread_safe_stack<chunk_to_sort> chunks;
+        data = other.data;
+    }
+
+};
+
+template<typename T>
+class sorter
+{
+private:
+    threadsafe_stack<chunk_to_sort<T>> chunks;
     std::vector<std::thread> threads;
     unsigned const max_thread_count;
     std::atomic<bool> end_of_data;
+
+public:
     sorter() :
         max_thread_count(std::thread::hardware_concurrency() - 1),
         end_of_data(false)
@@ -29,7 +47,9 @@ struct sorter
     }
     void try_sort_chunk()
     {
-        std::shared_ptr<chunk_to_sort > chunk = chunks.pop();
+        if (chunks.empty()) 
+            return;
+        std::shared_ptr<chunk_to_sort<T> > chunk = chunks.pop();
         if (chunk)
         {
             sort_chunk(chunk);
@@ -46,12 +66,13 @@ struct sorter
         result.splice(result.begin(), chunk_data, chunk_data.begin());
         // 将该元素值作为base值
         T const& partition_val = *result.begin();
+        
         // 将chunk_data中剩余元素根据base值分区
         typename std::list<T>::iterator divide_point =
             std::partition(chunk_data.begin(), chunk_data.end(),
                 [&](T const& val) {return val < partition_val; });
         // 小于base值的部分保存至new_lower_chunk，splice之后的chunk_data即为大于base值的部分
-        chunk_to_sort new_lower_chunk;
+        chunk_to_sort<T> new_lower_chunk;
         new_lower_chunk.data.splice(new_lower_chunk.data.end(),
             chunk_data, chunk_data.begin(),
             divide_point);
@@ -63,7 +84,9 @@ struct sorter
         if (threads.size() < max_thread_count)
         {
             threads.push_back(std::thread(&sorter<T>::sort_thread, this));
+
         }
+
         // 大于base值的部分递归调用自身，继续进行分区排序
         std::list<T> new_higher(do_sort(chunk_data));
         // 将排好序的大于base部分的list拼接到result
@@ -79,7 +102,7 @@ struct sorter
         // 返回结果
         return result;
     }
-    void sort_chunk(std::shared_ptr<chunk_to_sort > const& chunk)
+    void sort_chunk(std::shared_ptr<chunk_to_sort<T> > const& chunk)
     {
         chunk->promise.set_value(do_sort(chunk->data));
     }
@@ -102,4 +125,22 @@ std::list<T> parallel_quick_sort(std::list<T> input) //代表了sorter类的大�
     }
     sorter<T> s;
     return s.do_sort(input);
+}
+
+
+int main(int argc, char const *argv[])
+{
+    auto print = [](const int& n) {std::cout << " " << n; };
+    std::list<int> table = {52, 63, 8, -3, 0, 999, 66, 128, -60};
+    std::for_each(table.begin(), table.end(), print);
+    std::cout << std::endl;
+
+    std::list<int> res = parallel_quick_sort(table);
+
+    
+
+    std::for_each(res.begin(), res.end(), print);
+    std::cout << std::endl;
+
+    return 0;
 }
